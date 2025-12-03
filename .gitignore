@@ -1,0 +1,8 @@
+# ignore input files from AoC
+*/input/**
+
+# ignore build folder 
+*/build/**
+
+# ignore binary folder
+*/bin/**
