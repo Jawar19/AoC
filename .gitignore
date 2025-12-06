@@ -1,8 +1,14 @@
 # ignore input files from AoC
-*/input/**
+**/input
 
 # ignore build folder 
-*/build/**
+**/build
 
 # ignore binary folder
-*/bin/**
+**/bin
+
+**/.cache
+
+**/.env
+
+**/cmake_*
