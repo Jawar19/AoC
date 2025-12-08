@@ -43,5 +43,9 @@ INSTANTIATE_TEST_SUITE_P(MoveSwitchTests, // Group name
                                  "R50\nL50",
                                  1 // <-- Expected result for R50 then L50
                              },
+                             MoveTestCase{
+                                 "R50\nL50\nL200",
+                                 3 // <-- Expected result for R50 then L50
+                             },
                              MoveTestCase{"R1000", 10}, MoveTestCase{"L1000", 10},
                              MoveTestCase{"L68\nL30\nR48\nL5\nR60\nL55\nL1\nL99\nR14\nL82", 6}));

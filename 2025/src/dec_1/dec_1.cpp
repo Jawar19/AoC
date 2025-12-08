@@ -5,6 +5,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdint>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -73,7 +74,7 @@ void solve_part_two_jank(std::filesystem::path &filepath) {
 int solve_part_two(std::filesystem::path &filepath) {
     // define relevant variables and starting conditions
     uint16_t password = 0;
-    uint16_t current_position = 50;
+    uint16_t dial = 50;
 
     // load the input file
     std::ifstream input_file(filepath);
@@ -81,27 +82,56 @@ int solve_part_two(std::filesystem::path &filepath) {
         throw std::runtime_error(std::format("Could not open file {}", filepath.string()));
         return -1;
     }
+
     std::string line;
+    int mod = 99 + 1;
+    int crossings;
     while (std::getline(input_file, line)) {
-        std::cout << line << '\t';
+
         int delta = extract_command(line);
-        int new_position = (int)calculate_position((short)delta, current_position);
-        int mod = 99 + 1;
+        int new_position = (int)calculate_position((short)delta, dial);
+        int next = dial + delta;
 
-        int raw = current_position + delta;
+        crossings = std::abs(floor_quotient(next, mod) - floor_quotient(dial, mod));
+        // Check for a left turn crossing the 0 boundary, where cycle math gives 0
+        if (delta < 0 && dial > 0 && new_position != 0 && next < 0 && crossings == 0) {
+            crossings = 1;
+        }
 
-        int full_turns = raw / mod;
-        int clicks = raw % mod;
+        if (crossings == 0) {
+            bool crossed_zero = (delta < 0) && (dial > 0) && (next <= 0);
+            // Note: If dial is 50, delta is -50, next is 0. This is true.
 
-        int crossings = std::abs(full_turns);
+            bool crossed_hundred = (delta > 0) && (dial < mod) && (next >= mod);
 
-        std::cout << full_turns << '\t' << current_position << '\t' << (delta) << '\t'
-                  << new_position << '\t' << clicks << '\t' << crossings << '\n';
-
+            if (crossed_zero || crossed_hundred) {
+                crossings = 1;
+            }
+        }
+        if (dial == 0 && crossings > 0) {
+            if (crossings > 0) {
+                --crossings;
+            }
+        }
         password += crossings;
-        current_position = new_position;
+        dial = new_position;
+
+        std::cout << line << '\t' << dial << '\t' << delta << '\t' << crossings << '\n';
     }
+    std::cout << "--------" << '\n';
+    std::cout << "|" << std::setw(6) << password << "|" << '\n';
+    std::cout << "--------" << '\n';
     return password;
+}
+
+int floor_quotient(int a, int mod) {
+    int q = a / mod;
+    int r = a % mod;
+
+    if (r < 0) {
+        --q;
+    }
+    return q;
 }
 
 int16_t extract_command(std::string_view line) {
