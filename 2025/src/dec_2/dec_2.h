@@ -77,26 +77,25 @@ class SolveDayTwo {
     static bool filter_p2(long x) {
         const std::string input_str = std::to_string(x);
         std::string_view input_view = input_str;
-        std::size_t pattern_length = input_view.size() / 2;
-        auto initial = input_view.substr(0, pattern_length);
+        const std::size_t length = input_view.size();
 
-        for (; pattern_length > 0; --pattern_length) {
-            auto chunked_view = input_view | std::ranges::views::chunk(pattern_length);
+        for (size_t pattern_len = 1; pattern_len <= length / 2; ++pattern_len) {
 
-            bool current_view_is_valid{false};
-
-            auto first_chunk = chunked_view.front();
-            auto chunked_view_drop = chunked_view | std::views::drop(1);
-            for (auto chunk : chunked_view_drop) {
-                if (!std::ranges::equal(first_chunk, chunk)) {
-                    // std::println("not equal");
-                    current_view_is_valid = false;
-                    break;
-                }
-                current_view_is_valid = true;
+            if (length % pattern_len != 0) {
+                continue;
             }
 
-            if (current_view_is_valid) {
+            bool is_valid{true};
+
+            std::string_view pattern = input_view.substr(0, pattern_len);
+            for (size_t i = pattern_len; i < length; i += pattern_len) {
+                if (input_view.substr(i, pattern_len) != pattern) {
+                    is_valid = false;
+                    break;
+                }
+            }
+
+            if (is_valid) {
                 return true;
             }
         };
