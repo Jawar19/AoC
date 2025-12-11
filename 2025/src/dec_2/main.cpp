@@ -2,10 +2,11 @@
  * Advent of code 2025 december 2nd
  * Author: Jacob Warrer
  */
-// #include "dec_2.h"
+#include "dec_2.h"
 #include "get_input.h"
 
 #include <cassert>
+#include <chrono>
 #include <filesystem>
 #include <iostream>
 #include <stdexcept>
@@ -24,8 +25,17 @@ auto main(int argc, char *argv[]) -> int {
                   << "\n";
     }
     try {
-        // solve_part_one(filename);
-        // solve_part_two(filename);
+        SolveDayTwo solver(filename);
+        auto start_time = std::chrono::system_clock::now();
+        long p1_result = solver.solve_part_one();
+        std::chrono::duration<double> duration = std::chrono::system_clock::now() - start_time;
+
+        start_time = std::chrono::system_clock::now();
+        long p2_result = solver.solve_part_two();
+        std::chrono::duration<double> duration_2 = std::chrono::system_clock::now() - start_time;
+
+        std::println("Solution to part 1 is {}, finished in {} s", p1_result, duration.count());
+        std::println("Solution to part 2 is {}, finished in {} s", p2_result, duration_2.count());
     } catch (std::runtime_error e) {
         std::cerr << "caught runtime error " << e.what() << '\n';
         return 1;
